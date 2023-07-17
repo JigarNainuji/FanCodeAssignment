@@ -1,0 +1,78 @@
+run command -> docker-compose up -d to start
+docker contains 3 images spring-app, mysql , redis
+
+application is live on port 8000 in docker image
+
+SQL file location ->
+/src/resource/schema.sql
+/src/resource/data.sql
+
+
+problem 1:
+
+    Endpoint /tour/matches returns all the matches for a given tour name.
+    The endpoint latency increases linearly with the number of tours. Modify the endpoint to increase the performance.
+
+    api -> http://localhost:8000/models/tour/{tourName}
+
+    solution->
+    there are 2 ways using that we can optimise it and  have try to implement all 2
+
+     1. create indexs based on tourName in database
+        --create index on tourname to optimise the time of fetch query by tour name
+        --CREATE INDEX idx_tours_name ON tours (name);
+     2. implement redis to reduce call on SQL server
+        (have implemented it but unfortunately not able to create connection of springboot app and redis in docker)
+        (cache logic is working for local without docker)
+
+
+Problem 2
+    Modify the endpoint /sport/tour/match to also return match's id, startTime and format
+    change query and related responseTO
+    jpql = "select m.name,t.name,s.name,m.startTime,m.format, m.id from Match m left join m.tour t left join t.sport s"
+
+Problem 3
+    Requirement: News Support for Matches and Tours
+    Functional Requirements:
+        1. News can be created for a match or a tour.
+        2. Each news created for a match also belongs to the corresponding tour.
+        3. Each news created for a tour also belongs to the corresponding sport.
+    Technical Requirements:
+        1. Create an endpoint to create news.
+        2. Create an endpoint to fetch news by match id
+        3. Create an endpoint to fetch news by tour id
+        4. Create an endpoint to fetch news by sport id
+
+    news DB Table
+    CREATE TABLE IF NOT EXISTS mydb.news (
+        id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        description TEXT NOT NULL,
+        matchId INT,
+        tourId INT,
+        sportId INT,
+        createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (matchId) REFERENCES mydb.matches(id),
+        FOREIGN KEY (tourId) REFERENCES mydb.tours(id),
+        FOREIGN KEY (sportId) REFERENCES mydb.sports(id)
+    );
+
+    it contains sportId,tourId,matchId so it will optimise the query of fetch by all 3
+
+
+    createEndPoints->
+       http://localhost:8000/news/createNewsByMatchId
+       http://localhost:8000/news/createNewsByTourId
+
+       requestbody:
+       {
+          "title":"abc",
+          "description":"abc",
+          "tourIdOrMatchId":1
+       }
+       this transfer object(TO) is use for both creat api
+
+    fetchEndPoint  ->
+       http://localhost:8000/news/getNewsByMatchId/{id}
+       http://localhost:8000/news/getNewsByTourId/{id}
+       http://localhost:8000/news/getNewsBySportId/{id}
