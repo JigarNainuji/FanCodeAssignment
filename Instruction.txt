@@ -22,8 +22,9 @@ problem 1:
         --create index on tourname to optimise the time of fetch query by tour name
         --CREATE INDEX idx_tours_name ON tours (name);
      2. implement redis to reduce call on SQL server
-        (have implemented it but unfortunately not able to create connection of springboot app and redis in docker)
-        (cache logic is working for local without docker)
+        (please clear the cache if database changes are done in matches table)
+        (caching is only on api matches by tour name)
+
 
 
 Problem 2

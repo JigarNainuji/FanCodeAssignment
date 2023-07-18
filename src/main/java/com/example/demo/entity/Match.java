@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
 
+import org.springframework.data.redis.core.RedisHash;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;

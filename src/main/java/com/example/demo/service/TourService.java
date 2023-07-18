@@ -27,15 +27,12 @@ public class TourService {
     MatchRepository matchRepository;
 
 
-//    @Cacheable(key = "#tourName",value = "Matches")
+    @Cacheable(key = "#tourName",value = "Matches")
     public List<MatchDetailResponseTO> getMatchesByTourName(String tourName) throws Exception {
         List<MatchDetailResponseTO> matchDetailResponseTOList = null;
         try {
-//            Integer tourId = tourRepository.findTourIdByTourName(tourName);
             matchDetailResponseTOList = new ArrayList<>();
-//            if (tourId == null || tourId <= 0) {
-//                throw new ValidationFailureException("Tour with TourName: " + tourName + " does not exist!");
-//            }
+//
             List<Match> matchList = matchRepository.findAllMatchesByTourName(tourName);
             ModelMapper modelMapper = new ModelMapper();
             modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
